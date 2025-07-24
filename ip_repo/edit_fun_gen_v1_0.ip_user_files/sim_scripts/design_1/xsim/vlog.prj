@@ -1,0 +1,18 @@
+verilog xil_defaultlib -i "../../../../../../../../../opt/Xilinx/2025.1/data/rsb/busdef" --include "/opt/Xilinx/2025.1/Vivado/data/xilinx_vip/include" --include "../../../../edit_fun_gen_v1_0.gen/sim_1/bd/design_1/ipshared/434f/hdl" --include "../../../../edit_fun_gen_v1_0.gen/sim_1/bd/design_1/ipshared/a9be" \
+"../../../../edit_fun_gen_v1_0.gen/sim_1/bd/design_1/ipshared/434f/hdl/axis_infrastructure_v1_1_vl_rfs.v" \
+
+sv xil_defaultlib -i "../../../../../../../../../opt/Xilinx/2025.1/data/rsb/busdef" --include "/opt/Xilinx/2025.1/Vivado/data/xilinx_vip/include" --include "../../../../edit_fun_gen_v1_0.gen/sim_1/bd/design_1/ipshared/434f/hdl" --include "../../../../edit_fun_gen_v1_0.gen/sim_1/bd/design_1/ipshared/a9be" \
+"../../../bd/design_1/ip/design_1_axi4stream_vip_0_1/sim/design_1_axi4stream_vip_0_1_pkg.sv" \
+"../../../../edit_fun_gen_v1_0.gen/sim_1/bd/design_1/ipshared/235a/hdl/axi4stream_vip_v1_1_vl_rfs.sv" \
+"../../../bd/design_1/ip/design_1_axi4stream_vip_0_1/sim/design_1_axi4stream_vip_0_1.sv" \
+
+verilog xil_defaultlib -i "../../../../../../../../../opt/Xilinx/2025.1/data/rsb/busdef" --include "/opt/Xilinx/2025.1/Vivado/data/xilinx_vip/include" --include "../../../../edit_fun_gen_v1_0.gen/sim_1/bd/design_1/ipshared/434f/hdl" --include "../../../../edit_fun_gen_v1_0.gen/sim_1/bd/design_1/ipshared/a9be" \
+"../../../bd/design_1/ip/design_1_fun_gen_0_0/sim/design_1_fun_gen_0_0.v" \
+"../../../bd/design_1/ip/design_1_clk_wiz_0/design_1_clk_wiz_0_clk_wiz.v" \
+"../../../bd/design_1/ip/design_1_clk_wiz_0/design_1_clk_wiz_0.v" \
+"../../../bd/design_1/sim/design_1.v" \
+
+verilog xil_defaultlib "glbl.v"
+
+# Do not sort compile order
+nosort
