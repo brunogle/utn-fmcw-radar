@@ -58,7 +58,8 @@ module axis_sweep #
     // AXI STREAM MASTER: Used for signal output
     output wire [31:0] M_AXIS_TDATA,
     output wire M_AXIS_TVALID,
-    input  wire M_AXIS_TREADY
+    input  wire M_AXIS_TREADY,
+    output  wire M_AXIS_TLAST
     );
     
     // Configuration Registers
@@ -94,7 +95,7 @@ module axis_sweep #
             bvalid_reg  <= 0;
             bresp_reg   <= 2'b00;
             cfg_min_val     <= 32'b0;
-            cfg_max_val     <= 32'b0;
+            cfg_max_val     <= 32'h0fffffff;
             cfg_clk_div     <= 32'b0;
             
         end else begin
@@ -157,7 +158,7 @@ module axis_sweep #
         end
     end
     
-    
+    /*
     // Sweep Generator
     reg [31:0] clk_div_count;
     reg signed [DATA_WIDTH-1:0] sweep_out;
@@ -182,6 +183,55 @@ module axis_sweep #
         end
     end 
     
-    assign M_AXIS_TDATA  = sweep_out;
-    assign M_AXIS_TVALID = 1'b1;
+        assign M_AXIS_TDATA  = sweep_out;                                         
+        assign M_AXIS_TVALID = 1'b1;                                              
+        assign M_AXIS_TLAST = (sweep_out == $signed(cfg_max_val[DATA_WIDTH-1:0]));
+     */
+    
+    reg tvalid;
+    reg [31:0] ramp;     // 0x0 to 0xF
+    reg [31:0] count;    // Packet counter (assume 16 samples per packet)
+    reg [31:0]  tdata;
+    reg tlast;
+    parameter PACKET_SIZE = 256;
+    always @(posedge ACLK) begin
+        if (!ARESETN) begin
+            tvalid <= 0;
+            ramp <= 0;
+            count <= 0;
+            tdata <= 0;
+            tlast <= 0;
+        end else begin
+            if (M_AXIS_TREADY) begin
+                tdata <= ramp;
+                //tvalid <= 1;
+
+                // TLAST logic
+                if (count == PACKET_SIZE - 1) begin
+                    tlast <= 1;
+                    count <= 0;
+                end else begin
+                    tlast <= 0;
+                    count <= count + 1;
+                end
+
+                // Ramp counter
+                if (ramp == 8'hFF)
+                    ramp <= 0;
+                else
+                    ramp <= ramp + 1;
+            end else begin
+                // Stall: don't advance anything
+                //tvalid <= 1;
+                tlast <= tlast;  // hold previous
+                tdata <= tdata;
+            end
+        end
+    end
+    
+    assign M_AXIS_TDATA = tdata;
+    assign M_AXIS_TVALID = {1'b1};
+    assign M_AXIS_TLAST = tlast;
+
+
 endmodule

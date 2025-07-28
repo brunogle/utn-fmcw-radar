@@ -72,7 +72,7 @@ system_ps_0_0_sc::system_ps_0_0_sc(const sc_core::sc_module_name& nm) : sc_core:
     model_param_props.addLong("C_TRACE_BUFFER_CLOCK_DELAY", "12");
     model_param_props.addLong("C_EMIO_GPIO_WIDTH", "64");
     model_param_props.addLong("C_INCLUDE_ACP_TRANS_CHECK", "0");
-    model_param_props.addLong("C_USE_DEFAULT_ACP_USER_VAL", "0");
+    model_param_props.addLong("C_USE_DEFAULT_ACP_USER_VAL", "1");
     model_param_props.addLong("C_S_AXI_ACP_ARUSER_VAL", "31");
     model_param_props.addLong("C_S_AXI_ACP_AWUSER_VAL", "31");
     model_param_props.addLong("C_M_AXI_GP0_ID_WIDTH", "12");
@@ -83,7 +83,7 @@ system_ps_0_0_sc::system_ps_0_0_sc(const sc_core::sc_module_name& nm) : sc_core:
     model_param_props.addLong("C_S_AXI_GP1_ID_WIDTH", "6");
     model_param_props.addLong("C_S_AXI_ACP_ID_WIDTH", "3");
     model_param_props.addLong("C_S_AXI_HP0_ID_WIDTH", "6");
-    model_param_props.addLong("C_S_AXI_HP0_DATA_WIDTH", "64");
+    model_param_props.addLong("C_S_AXI_HP0_DATA_WIDTH", "32");
     model_param_props.addLong("C_S_AXI_HP1_ID_WIDTH", "6");
     model_param_props.addLong("C_S_AXI_HP1_DATA_WIDTH", "64");
     model_param_props.addLong("C_S_AXI_HP2_ID_WIDTH", "6");
@@ -92,7 +92,7 @@ system_ps_0_0_sc::system_ps_0_0_sc(const sc_core::sc_module_name& nm) : sc_core:
     model_param_props.addLong("C_S_AXI_HP3_DATA_WIDTH", "64");
     model_param_props.addLong("C_M_AXI_GP0_THREAD_ID_WIDTH", "12");
     model_param_props.addLong("C_M_AXI_GP1_THREAD_ID_WIDTH", "12");
-    model_param_props.addLong("C_NUM_F2P_INTR_INPUTS", "1");
+    model_param_props.addLong("C_NUM_F2P_INTR_INPUTS", "2");
     model_param_props.addLong("C_DQ_WIDTH", "32");
     model_param_props.addLong("C_DQS_WIDTH", "4");
     model_param_props.addLong("C_DM_WIDTH", "4");
@@ -107,7 +107,7 @@ system_ps_0_0_sc::system_ps_0_0_sc(const sc_core::sc_module_name& nm) : sc_core:
     model_param_props.addLong("C_USE_S_AXI_HP1", "0");
     model_param_props.addLong("C_USE_S_AXI_HP2", "0");
     model_param_props.addLong("C_USE_S_AXI_HP3", "0");
-    model_param_props.addLong("C_USE_S_AXI_ACP", "0");
+    model_param_props.addLong("C_USE_S_AXI_ACP", "1");
     model_param_props.addLong("C_GP0_EN_MODIFIABLE_TXN", "1");
     model_param_props.addLong("C_GP1_EN_MODIFIABLE_TXN", "1");
     model_param_props.addString("C_IRQ_F2P_MODE", "DIRECT");
@@ -124,6 +124,8 @@ system_ps_0_0_sc::system_ps_0_0_sc(const sc_core::sc_module_name& nm) : sc_core:
   // initialize AXI sockets
   M_AXI_GP0_rd_socket = mp_impl->M_AXI_GP0_rd_socket;
   M_AXI_GP0_wr_socket = mp_impl->M_AXI_GP0_wr_socket;
+  S_AXI_ACP_rd_socket = mp_impl->S_AXI_ACP_rd_socket;
+  S_AXI_ACP_wr_socket = mp_impl->S_AXI_ACP_wr_socket;
 }
 
 system_ps_0_0_sc::~system_ps_0_0_sc()
