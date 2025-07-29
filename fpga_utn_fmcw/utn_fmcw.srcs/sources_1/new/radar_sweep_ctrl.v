@@ -81,6 +81,11 @@ module radar_sweep_ctrl(
     reg        clear_reg_start;
     reg [15:0]  clk_div_counter;
     
+    // AXI-STREAM MASTER: Internal Signals
+    reg m_axis_tvalid_reg;
+    reg m_axis_tlast_reg;
+    reg [15:0] tdata_reg;
+    
     assign s_axi_awready = s_axi_awready_reg;
     assign s_axi_wready = wready_reg;
     assign s_axi_bresp = 2'b00; // OKAY response
@@ -106,6 +111,9 @@ module radar_sweep_ctrl(
         if (!resetn) begin
             wready_reg <= 1'b0;
             bvalid_reg <= 1'b0;
+            reg_sweep_clk_div <= 0;
+            reg_sweep_length <= 0;
+            reg_start <= 0;
         end else if (s_axi_wvalid && !wready_reg) begin
             wready_reg <= 1'b1;
             case (s_axi_awaddr[5:2])
@@ -122,6 +130,7 @@ module radar_sweep_ctrl(
                 end
                 default: begin
                     // Handle invalid addresses
+                    
                 end
             endcase
             bvalid_reg <= 1'b1;
@@ -134,7 +143,8 @@ module radar_sweep_ctrl(
         // Handle Logic that can affect register values
         
         if(clear_reg_start && reg_start) begin
-            reg_start <= 1'b0;
+            reg_start <= 0;
+            clear_reg_start <= 0;
         end
     end
 
@@ -160,27 +170,53 @@ module radar_sweep_ctrl(
     end
     
 
+
     always @(posedge clk) begin
-        if (!resetn) begin
-            sweep_addr <= 16'b0;
-        end else if(reg_start && (reg_sweep_clk_div == clk_div_counter)) begin
+        if (!resetn || !reg_start) begin
+            sweep_addr <= 0;
             clk_div_counter <= 0;
-            if(sweep_addr + 1 < reg_sweep_length) begin
-                sweep_addr <= sweep_addr + 1;
-            end else begin
-                sweep_addr <= 16'b0;
-                clear_reg_start <= 1'b1;
+            m_axis_tvalid_reg <= 0;
+            m_axis_tlast_reg <= 0; 
+            tdata_reg <= 0;
+            clear_reg_start <= 0;
+
+        end else if(!m_axis_tvalid_reg || m_axis_tready)begin
+			
+
+			if ((sweep_addr + 1 == reg_sweep_length) && (clk_div_counter == reg_sweep_clk_div)) begin
+				m_axis_tlast_reg <= 1;
+			end else begin
+				m_axis_tlast_reg <= 0;
+			end
+
+
+
+			m_axis_tvalid_reg <= (reg_start && !clear_reg_start) && (!m_axis_tlast_reg);
+
+			if(m_axis_tvalid_reg && m_axis_tready && reg_start) begin
+				if(m_axis_tlast_reg) begin
+                    clear_reg_start <= 1;
+                    m_axis_tvalid_reg <= 0;
+                    m_axis_tlast_reg <= 0;
+                    sweep_addr <= 0;
+                    clk_div_counter <= 0;
+			    end
+                tdata_reg <= bram_dout;
+				if (clk_div_counter < reg_sweep_clk_div) begin
+					clk_div_counter <= clk_div_counter + 1;
+				end else begin
+					clk_div_counter <= 0;
+					if (sweep_addr  + 1 < reg_sweep_length) begin
+						sweep_addr <= sweep_addr + 1;
+					end
+				end
             end
-        end else if(reg_start) begin
-            clk_div_counter <= clk_div_counter + 1;
-        end else if(clear_reg_start) begin
-            clear_reg_start <= 1'b0;
         end
-    end 
+    end
    
-    assign m_axis_tdata = reg_start ? bram_dout : 16'b0;
-    assign m_axis_tvalid = reg_start;
-    assign m_axis_tlast = ((sweep_addr + 1) == reg_sweep_length);
+    assign m_axis_tdata = tdata_reg;
+    assign m_axis_tvalid = m_axis_tvalid_reg;
+    assign m_axis_tlast = m_axis_tlast_reg;
     assign m_axis_tkeep = 2'b11; 
     assign bram_addr = sweep_addr[13:0];
     
