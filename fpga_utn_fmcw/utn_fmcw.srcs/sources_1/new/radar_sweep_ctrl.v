@@ -44,11 +44,11 @@ module radar_sweep_ctrl(
     input wire          s_axi_rready,
 
     // AXI STREAM MASTER: Used for signal output
-    output wire [31:0] m_axis_tdata,
+    output wire [15:0] m_axis_tdata,
     output wire m_axis_tvalid,
     input  wire m_axis_tready,
     output wire m_axis_tlast,
-
+    output wire [1:0] m_axis_tkeep,
     // BRAM: Used for reading sweep waveform
     (* X_INTERFACE_INFO = "xilinx.com:interface:bram:1.0 BRAM_PORT CLK" *)  output wire        bram_clk,
     (* X_INTERFACE_INFO = "xilinx.com:interface:bram:1.0 BRAM_PORT RST" *)  output wire        bram_rst,
@@ -178,13 +178,13 @@ module radar_sweep_ctrl(
         end
     end 
    
-    assign m_axis_tdata = reg_start ? {16'b0, bram_dout} : 32'b0;
+    assign m_axis_tdata = reg_start ? bram_dout : 16'b0;
     assign m_axis_tvalid = reg_start;
     assign m_axis_tlast = ((sweep_addr + 1) == reg_sweep_length);
-    
+    assign m_axis_tkeep = 2'b11; 
     assign bram_addr = sweep_addr[13:0];
     
-    
+   
     assign bram_we = 1'b0;
     assign bram_rst = 1'b0;
     assign bram_clk = clk;

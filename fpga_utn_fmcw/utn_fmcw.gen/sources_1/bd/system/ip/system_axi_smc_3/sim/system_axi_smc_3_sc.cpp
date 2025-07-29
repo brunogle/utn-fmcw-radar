@@ -70,10 +70,14 @@ system_axi_smc_3_sc::system_axi_smc_3_sc(const sc_core::sc_module_name& nm) : sc
   // initialize AXI sockets
   S00_AXI_tlm_aximm_read_socket = mp_impl->S00_AXI_tlm_aximm_read_socket;
   S00_AXI_tlm_aximm_write_socket = mp_impl->S00_AXI_tlm_aximm_write_socket;
+  S01_AXI_tlm_aximm_read_socket = mp_impl->S01_AXI_tlm_aximm_read_socket;
+  S01_AXI_tlm_aximm_write_socket = mp_impl->S01_AXI_tlm_aximm_write_socket;
   M00_AXI_tlm_aximm_read_socket = mp_impl->M00_AXI_tlm_aximm_read_socket;
   M00_AXI_tlm_aximm_write_socket = mp_impl->M00_AXI_tlm_aximm_write_socket;
   M01_AXI_tlm_aximm_read_socket = mp_impl->M01_AXI_tlm_aximm_read_socket;
   M01_AXI_tlm_aximm_write_socket = mp_impl->M01_AXI_tlm_aximm_write_socket;
+  M02_AXI_tlm_aximm_read_socket = mp_impl->M02_AXI_tlm_aximm_read_socket;
+  M02_AXI_tlm_aximm_write_socket = mp_impl->M02_AXI_tlm_aximm_write_socket;
 }
 
 system_axi_smc_3_sc::~system_axi_smc_3_sc()
