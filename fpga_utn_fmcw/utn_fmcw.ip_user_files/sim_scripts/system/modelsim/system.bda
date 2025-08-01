@@ -298,6 +298,24 @@
             },
             "V9": {
                 "VT": "AC",
+                "BA": "0x43C00000",
+                "HA": "0x43C0FFFF",
+                "BP": "C_BASEADDR",
+                "HP": "C_HIGHADDR",
+                "MA": "Data",
+                "MX": "/ps_0",
+                "MI": "M_AXI_GP0",
+                "MS": "SEG_debug_bridge_0_Reg0",
+                "MV": "xilinx.com:ip:processing_system7:5.5",
+                "SX": "/debug_bridge_0",
+                "SI": "S_AXI",
+                "SS": "Reg0",
+                "SV": "xilinx.com:ip:debug_bridge:3.0",
+                "TM": "both",
+                "TU": "register"
+            },
+            "V10": {
+                "VT": "AC",
                 "BA": "0x60000000",
                 "HA": "0x60000FFF",
                 "BP": "C_BASEADDR",
@@ -356,6 +374,11 @@
             },
             {
                 "src": "V9",
+                "trg": "V2",
+                "EH": "2"
+            },
+            {
+                "src": "V10",
                 "trg": "V2",
                 "EH": "2"
             }

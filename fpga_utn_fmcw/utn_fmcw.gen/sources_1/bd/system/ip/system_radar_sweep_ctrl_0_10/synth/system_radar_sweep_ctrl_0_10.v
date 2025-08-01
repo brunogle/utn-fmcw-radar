@@ -52,7 +52,7 @@
 
 (* X_CORE_INFO = "radar_sweep_ctrl,Vivado 2025.1" *)
 (* CHECK_LICENSE_TYPE = "system_radar_sweep_ctrl_0_10,radar_sweep_ctrl,{}" *)
-(* CORE_GENERATION_INFO = "system_radar_sweep_ctrl_0_10,radar_sweep_ctrl,{x_ipProduct=Vivado 2025.1,x_ipVendor=xilinx.com,x_ipLibrary=module_ref,x_ipName=radar_sweep_ctrl,x_ipVersion=1.0,x_ipCoreRevision=1,x_ipLanguage=VERILOG,x_ipSimLanguage=MIXED,REG_START_ADDR=0000,REG_SWEEP_CLK_DIV_ADDR=0001,REG_SWEEP_LENGTH_ADDR=0010}" *)
+(* CORE_GENERATION_INFO = "system_radar_sweep_ctrl_0_10,radar_sweep_ctrl,{x_ipProduct=Vivado 2025.1,x_ipVendor=xilinx.com,x_ipLibrary=module_ref,x_ipName=radar_sweep_ctrl,x_ipVersion=1.0,x_ipCoreRevision=1,x_ipLanguage=VERILOG,x_ipSimLanguage=MIXED,REG_START_ADDR=0000,REG_SWEEP_CLK_DIV_ADDR=0001,REG_SWEEP_MAX_ADDR_ADDR=0010}" *)
 (* IP_DEFINITION_SOURCE = "module_ref" *)
 (* DowngradeIPIdentifiedWarnings = "yes" *)
 module system_radar_sweep_ctrl_0_10 (
@@ -165,7 +165,7 @@ output wire sampling;
   radar_sweep_ctrl #(
     .REG_START_ADDR(4'B0000),
     .REG_SWEEP_CLK_DIV_ADDR(4'B0001),
-    .REG_SWEEP_LENGTH_ADDR(4'B0010)
+    .REG_SWEEP_MAX_ADDR_ADDR(4'B0010)
   ) inst (
     .clk(clk),
     .resetn(resetn),

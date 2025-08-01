@@ -52,7 +52,7 @@ module test_tb;
     // AXI Stream Master
     wire [15:0] m_axis_tdata;
     wire        m_axis_tvalid;
-    reg         m_axis_tready = 1;
+    reg         m_axis_tready;
     wire        m_axis_tlast;
     wire [1:0]  m_axis_tkeep;
 
@@ -66,7 +66,6 @@ module test_tb;
 
     // BRAM model (simple ROM for test)
     reg [15:0] bram_mem [0:15];
-    assign bram_dout = bram_en ? bram_mem[bram_addr] : 16'hZZZZ;
 
     // Instantiate DUT
     radar_sweep_ctrl dut (
@@ -106,6 +105,16 @@ module test_tb;
     // Clock generation
     always #5 clk = ~clk; // 100 MHz
 
+    // Clocked output
+    reg [31:0] bram_dout_reg;
+    assign bram_dout = bram_dout_reg;
+    
+    // Clocked BRAM read
+    always @(posedge clk) begin
+        if (bram_en)
+            bram_dout_reg <= bram_mem[bram_addr];
+    end
+    
     // Task to perform AXI-Lite write
     task axi_write(input [31:0] addr, input [31:0] data);
     begin
@@ -126,6 +135,7 @@ module test_tb;
     // Initialize BRAM and run simulation
     initial begin
         // Initialize BRAM content
+        m_axis_tready = 1;
         bram_mem[0] = 16'h1111;
         bram_mem[1] = 16'h2222;
         bram_mem[2] = 16'h3333;
@@ -142,17 +152,20 @@ module test_tb;
         bram_mem[13] = 16'heeee;
         bram_mem[14] = 16'hffff;
         bram_mem[15] = 16'hefef;
-
+        m_axis_tready = 1;
         // Apply reset
         resetn = 0;
         #100;
         resetn = 1;
 
         // Wait a few cycles
+       
         #20;
 
         // Write sweep_clk_div = 5
         axi_write(32'h04, 32'd0);
+
+             
         
         // Write sweep_length = 5
         axi_write(32'h08, 32'd15);
@@ -160,8 +173,15 @@ module test_tb;
         // Start sweep
         axi_write(32'h00, 32'd1);
 
+        #102        
+        m_axis_tready = 0;
+        #97
+        m_axis_tready = 1;
+
         // Let it run
-        #2000;
+        #500;
+        
+
 
         axi_write(32'h00, 32'd1);
         #2000;

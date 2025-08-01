@@ -4,6 +4,7 @@ vhdl xil_defaultlib  \
 "../../../bd/system/ip/system_axi_bram_ctrl_0_3/sim/system_axi_bram_ctrl_0_3.vhd" \
 "../../../bd/system/ip/system_axi_dma_0_5/sim/system_axi_dma_0_5.vhd" \
 "../../../bd/system/ip/system_smartconnect_0_0/bd_0/ip/ip_1/sim/bd_919a_psr_aclk_0.vhd" \
+"../../../bd/system/ip/system_debug_bridge_0_0/bd_0/ip/ip_1/sim/bd_1d75_bsip_0.vhd" \
 
 # Do not sort compile order
 nosort
