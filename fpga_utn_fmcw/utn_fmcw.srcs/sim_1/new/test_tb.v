@@ -163,7 +163,7 @@ module test_tb;
         #20;
 
         // Write sweep_clk_div = 5
-        axi_write(32'h04, 32'd0);
+        axi_write(32'h04, 32'd5);
 
              
         

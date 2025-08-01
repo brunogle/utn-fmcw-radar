@@ -178,6 +178,7 @@ module radar_sweep_ctrl(
             m_axis_tvalid_reg <= 0;
             m_axis_tlast_reg <= 0;
             clear_reg_start <= 0;
+            clk_div_counter <= 0;
             sweep_addr <= 0;
             state <= IDLE; 
         end else begin
@@ -193,7 +194,12 @@ module radar_sweep_ctrl(
                 end
                 
                 PREP: begin // Fetch first data from bram, and prepare for next addr
-                    sweep_addr <= sweep_addr + 1;
+                    if(clk_div_counter == reg_sweep_clk_div) begin
+                        sweep_addr <= sweep_addr + 1;
+                    end else begin
+                        clk_div_counter <= clk_div_counter + 1;
+                    end
+                    
                     m_axis_tdata_reg <= bram_dout;
                     state <= SWEEP;
                 end
@@ -202,11 +208,14 @@ module radar_sweep_ctrl(
                     if (m_axis_tready) begin // Count only if AXIS data was sent correctly 
                         m_axis_tvalid_reg <= 1;
                         m_axis_tdata_reg <= bram_dout;
-                        if(sweep_addr == reg_sweep_max_addr + 1) begin
+                        if((clk_div_counter - 1 > reg_sweep_clk_div) && (sweep_addr == reg_sweep_max_addr + 1)) begin
                             state <= LAST;
                             m_axis_tlast_reg <= 1;
-                        end else begin
+                        end else if (clk_div_counter == reg_sweep_clk_div) begin
                             sweep_addr <= sweep_addr + 1;
+                            clk_div_counter <= 0;
+                        end else begin
+                            clk_div_counter <= clk_div_counter + 1;
                         end
                     end
                 end
@@ -216,6 +225,7 @@ module radar_sweep_ctrl(
                         m_axis_tvalid_reg <= 0;
                         m_axis_tlast_reg <= 0;
                         sweep_addr <= 0;
+                        clk_div_counter <= 0;
                         m_axis_tdata_reg <= 0;
                         state <= IDLE;
                         clear_reg_start <= 1;
