@@ -1,15 +1,16 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
+// Company:   UTN
+// Engineer:  Bruno Glecer
 // 
 // Create Date: 07/28/2025 11:08:44 PM
-// Design Name: 
+// Design Name:  ADC Sampler
 // Module Name: adc_sampler
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
+// Project Name:   FMCW Radar
+// Target Devices:  XC7Z010CLG400
+// Tool Versions:  2025.1
+// Description:    Intended to sample streams of data from ADC. Relays AXIX data when
+// sample is driven high, and ends when its driven low, while sending a TLAST signal
 // 
 // Dependencies: 
 // 
@@ -20,10 +21,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module adc_sampler #
-(
-  parameter integer AXIS_TDATA_WIDTH = 16
-)
+module adc_sampler
 (
     
     input sample,
@@ -32,28 +30,26 @@ module adc_sampler #
     
      // Slave side
     output wire                        s_axis_tready,
-    input  wire [AXIS_TDATA_WIDTH-1:0] s_axis_tdata,
+    input  wire [15:0]                 s_axis_tdata,
     input  wire                        s_axis_tvalid,
-    input  wire                        s_axis_tlast,
-    input  wire [0:3]                  s_axis_tkeep,
 
     // Master side
     input   wire                        m_axis_tready,
-    output  wire [AXIS_TDATA_WIDTH-1:0] m_axis_tdata,
+    output  wire [15:0]                 m_axis_tdata,
     output  wire                        m_axis_tvalid,
     output  wire                        m_axis_tlast,
-    output  wire  [0:3]                 m_axis_tkeep
+    output  wire  [0:1]                 m_axis_tkeep
     );
    
-    reg [AXIS_TDATA_WIDTH-1:0] buffer_data;
+    reg [15:0]           buffer_data;
     reg                  buffer_valid;
     reg                  buffer_tlast;
     reg [0:3]            buffer_tkeep;
     
     assign m_axis_tdata  = buffer_data;
     assign m_axis_tvalid = buffer_valid;
-    assign s_axis_tready = ~buffer_valid || (m_axis_tready && buffer_valid);
-    assign m_axis_tkeep = buffer_tkeep;
+    assign s_axis_tready = 1'b1;
+    assign m_axis_tkeep =  2'b11;
     assign m_axis_tlast = buffer_tlast;
     
     always @(posedge clk) begin
@@ -62,12 +58,19 @@ module adc_sampler #
             buffer_valid <= 0;
             buffer_tlast <= 0;
         end else begin
-            if (s_axis_tvalid && s_axis_tready) begin
-                buffer_data  <= s_axis_tdata;
-                buffer_tlast <= s_axis_tlast;
+            if(sample && !buffer_tlast) begin
                 buffer_valid <= 1;
-                buffer_tkeep <= buffer_tkeep;
-            end else if (m_axis_tready && buffer_valid) begin
+                buffer_data <= s_axis_tdata;            
+            end else if(!sample && !buffer_tlast && buffer_valid) begin
+                buffer_tlast <= 1;
+                buffer_data <= s_axis_tdata;
+            end else if(!sample && buffer_tlast) begin
+                buffer_tlast <= 0;
+                buffer_valid <= 0;
+                buffer_data <= s_axis_tdata;
+            end else begin
+                buffer_tlast <= 0;
+                buffer_data <= 0;
                 buffer_valid <= 0;
             end
         end

@@ -1,6 +1,0 @@
-vhdl xil_defaultlib  \
-"../../../../edit_fun_gen_v1_0.gen/sim_1/bd/design_1/ipshared/9438/hdl/proc_sys_reset_v5_0_vh_rfs.vhd" \
-"../../../bd/design_1/ip/design_1_rst_clk_wiz_100M_0/sim/design_1_rst_clk_wiz_100M_0.vhd" \
-
-# Do not sort compile order
-nosort

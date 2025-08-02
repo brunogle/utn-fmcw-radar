@@ -52,13 +52,12 @@
 
 (* X_CORE_INFO = "axis_adc,Vivado 2025.1" *)
 (* CHECK_LICENSE_TYPE = "system_axis_adc_0_2,axis_adc,{}" *)
-(* CORE_GENERATION_INFO = "system_axis_adc_0_2,axis_adc,{x_ipProduct=Vivado 2025.1,x_ipVendor=xilinx.com,x_ipLibrary=module_ref,x_ipName=axis_adc,x_ipVersion=1.0,x_ipCoreRevision=1,x_ipLanguage=VERILOG,x_ipSimLanguage=MIXED,DAC_DATA_WIDTH=14,AXIS_TDATA_WIDTH=32,AXIS_STREAM_LENGTH=16}" *)
+(* CORE_GENERATION_INFO = "system_axis_adc_0_2,axis_adc,{x_ipProduct=Vivado 2025.1,x_ipVendor=xilinx.com,x_ipLibrary=module_ref,x_ipName=axis_adc,x_ipVersion=1.0,x_ipCoreRevision=1,x_ipLanguage=VERILOG,x_ipSimLanguage=MIXED}" *)
 (* IP_DEFINITION_SOURCE = "module_ref" *)
 (* DowngradeIPIdentifiedWarnings = "yes" *)
 module system_axis_adc_0_2 (
   adc_dat_a,
   adc_dat_b,
-  adc_csn,
   aclk,
   M01_AXIS_TREADY,
   M01_AXIS_TDATA,
@@ -74,17 +73,16 @@ module system_axis_adc_0_2 (
 
 input wire [15 : 0] adc_dat_a;
 input wire [15 : 0] adc_dat_b;
-output wire adc_csn;
 (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 aclk CLK" *)
 (* X_INTERFACE_MODE = "slave" *)
 (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME aclk, ASSOCIATED_BUSIF M01_AXIS:M02_AXIS, FREQ_HZ 125000000, FREQ_TOLERANCE_HZ 0, PHASE 0.0, CLK_DOMAIN system_pll_0_0_clk_out1, INSERT_VIP 0" *)
 input wire aclk;
 (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 M01_AXIS TREADY" *)
 (* X_INTERFACE_MODE = "master" *)
-(* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME M01_AXIS, TDATA_NUM_BYTES 4, TDEST_WIDTH 0, TID_WIDTH 0, TUSER_WIDTH 0, HAS_TREADY 1, HAS_TSTRB 0, HAS_TKEEP 1, HAS_TLAST 1, FREQ_HZ 125000000, PHASE 0.0, CLK_DOMAIN system_pll_0_0_clk_out1, LAYERED_METADATA undef, INSERT_VIP 0" *)
+(* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME M01_AXIS, TDATA_NUM_BYTES 2, TDEST_WIDTH 0, TID_WIDTH 0, TUSER_WIDTH 0, HAS_TREADY 1, HAS_TSTRB 0, HAS_TKEEP 1, HAS_TLAST 1, FREQ_HZ 125000000, PHASE 0.0, CLK_DOMAIN system_pll_0_0_clk_out1, LAYERED_METADATA undef, INSERT_VIP 0" *)
 input wire M01_AXIS_TREADY;
 (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 M01_AXIS TDATA" *)
-output wire [31 : 0] M01_AXIS_TDATA;
+output wire [15 : 0] M01_AXIS_TDATA;
 (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 M01_AXIS TVALID" *)
 output wire M01_AXIS_TVALID;
 (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 M01_AXIS TLAST" *)
@@ -93,10 +91,10 @@ output wire M01_AXIS_TLAST;
 output wire [0 : 3] M01_AXIS_TKEEP;
 (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 M02_AXIS TREADY" *)
 (* X_INTERFACE_MODE = "master" *)
-(* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME M02_AXIS, TDATA_NUM_BYTES 4, TDEST_WIDTH 0, TID_WIDTH 0, TUSER_WIDTH 0, HAS_TREADY 1, HAS_TSTRB 0, HAS_TKEEP 1, HAS_TLAST 1, FREQ_HZ 125000000, PHASE 0.0, CLK_DOMAIN system_pll_0_0_clk_out1, LAYERED_METADATA undef, INSERT_VIP 0" *)
+(* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME M02_AXIS, TDATA_NUM_BYTES 2, TDEST_WIDTH 0, TID_WIDTH 0, TUSER_WIDTH 0, HAS_TREADY 1, HAS_TSTRB 0, HAS_TKEEP 1, HAS_TLAST 1, FREQ_HZ 125000000, PHASE 0.0, CLK_DOMAIN system_pll_0_0_clk_out1, LAYERED_METADATA undef, INSERT_VIP 0" *)
 input wire M02_AXIS_TREADY;
 (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 M02_AXIS TDATA" *)
-output wire [31 : 0] M02_AXIS_TDATA;
+output wire [15 : 0] M02_AXIS_TDATA;
 (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 M02_AXIS TVALID" *)
 output wire M02_AXIS_TVALID;
 (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 M02_AXIS TLAST" *)
@@ -104,14 +102,9 @@ output wire M02_AXIS_TLAST;
 (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 M02_AXIS TKEEP" *)
 output wire [0 : 3] M02_AXIS_TKEEP;
 
-  axis_adc #(
-    .DAC_DATA_WIDTH(14),
-    .AXIS_TDATA_WIDTH(32),
-    .AXIS_STREAM_LENGTH(16)
-  ) inst (
+  axis_adc inst (
     .adc_dat_a(adc_dat_a),
     .adc_dat_b(adc_dat_b),
-    .adc_csn(adc_csn),
     .aclk(aclk),
     .M01_AXIS_TREADY(M01_AXIS_TREADY),
     .M01_AXIS_TDATA(M01_AXIS_TDATA),

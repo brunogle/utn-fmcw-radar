@@ -9,7 +9,8 @@
 // Project Name: FMCW Radar
 // Target Devices: XC7Z010CLG400
 // Tool Versions: 2025.1
-// Description: 
+// Description: Reads BRAM to generate the sweep as input for the VCO of a
+// FMCW Radar
 // 
 // Dependencies: 
 // 
@@ -87,7 +88,8 @@ module radar_sweep_ctrl(
 
     localparam IDLE = 2'b00, PREP = 2'b01, SWEEP = 2'b10, LAST = 2'b11;
     reg [1:0] state;
-
+    reg sampling_reg;
+    
     //  AXI-LITE SLAVE: Write address handshake
     always @(posedge clk) begin
         if (!resetn) begin
@@ -180,6 +182,7 @@ module radar_sweep_ctrl(
             clear_reg_start <= 0;
             clk_div_counter <= 0;
             sweep_addr <= 0;
+            sampling_reg <= 0;
             state <= IDLE; 
         end else begin
             case (state)
@@ -207,6 +210,7 @@ module radar_sweep_ctrl(
                 SWEEP: begin
                     if (m_axis_tready) begin // Count only if AXIS data was sent correctly 
                         m_axis_tvalid_reg <= 1;
+                        sampling_reg <= 1;
                         m_axis_tdata_reg <= bram_dout;
                         if((clk_div_counter - 1 > reg_sweep_clk_div) && (sweep_addr == reg_sweep_max_addr + 1)) begin
                             state <= LAST;
@@ -223,12 +227,14 @@ module radar_sweep_ctrl(
                 LAST: begin
                     if (m_axis_tready) begin
                         m_axis_tvalid_reg <= 0;
+                        sampling_reg <= 0;
                         m_axis_tlast_reg <= 0;
                         sweep_addr <= 0;
                         clk_div_counter <= 0;
                         m_axis_tdata_reg <= 0;
                         state <= IDLE;
                         clear_reg_start <= 1;
+                        
                     end                
                 end
                 
@@ -236,7 +242,6 @@ module radar_sweep_ctrl(
             endcase
         end        
     end
-    
     // AXI-STREAM MASTER: Signals
     assign m_axis_tdata = m_axis_tdata_reg;
     assign m_axis_tvalid = m_axis_tvalid_reg;
@@ -250,5 +255,7 @@ module radar_sweep_ctrl(
     assign bram_clk = clk;
     assign bram_en = m_axis_tready; // Only fetch next value if prev clock cycle was OK
     
-
+    // External Logic Signals
+    assign sampling = sampling_reg;
+    
 endmodule

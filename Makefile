@@ -19,9 +19,6 @@ bit: $(FPGA_PROJECT_BIT)
 gui:
 	nohup $(VIVADO) $(FPGA_PROJECT_XPR) >/dev/null 2>&1 < /dev/null &
 
-clean:
-	rm -rf $(FPGA_PROJECT_DIR)
-
 upload:
 	scp $(FPGA_PROJECT_BIT)  $(RED_PITAYA_SSH):$(RED_PITAYA_BITSTREAM_DIR)
 	ssh $(RED_PITAYA_SSH) "/opt/xvc/xvcstop"
@@ -31,8 +28,6 @@ upload_vivado:
 	scp $(FPGA_PROJECT_BIT_VIVADO)  $(RED_PITAYA_SSH):$(RED_PITAYA_BITSTREAM_DIR)
 	ssh $(RED_PITAYA_SSH) "/opt/xvc/xvcstop"
 	ssh $(RED_PITAYA_SSH) "cat $(RED_PITAYA_BITSTREAM_DIR)/system_wrapper.bit > /dev/xdevcfg"
-
-
 
 $(FPGA_PROJECT_XPR):
 	$(VIVADO) -mode batch -source vivado_setup_project.tcl -tclargs $(FPGA_PROJECT_NAME) $(FPGA_PROJECT_DIR)
